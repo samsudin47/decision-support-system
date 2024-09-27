@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@100..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sacramento&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Bungee+Shade&display=swap");
+
+body {
+  font-family: "Anek Devanagari", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  overflow-x: hidden;
+}
+
+.layout-login,
+.layout-regis {
+  background-color: #213777;
+  max-width: 100%;
+}
+
+.judul {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.paragraph {
+  text-align: justify;
+}
+
+.section-apps {
+  background-color: #42548d;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.footer-judul {
+  font-family: "Anton", sans-serif;
+  font-style: normal;
+}
+
+li {
+  list-style: none;
+  margin-top: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #ffff;
+}
+
+.h1 {
+  padding-right: 19px;
+}
+
+.list-inline {
+  padding-bottom: 60px;
+}
+
+.sidebar {
+  color: #ffff;
+}
+
+.sideBar {
+  background-color: #42548d;
+  min-height: 100vh;
+}
