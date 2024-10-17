@@ -1,7 +1,7 @@
 import SideBar from "../components/SideBar";
-import Dashboard from "../components/Dashboards";
+import Alternatif from "../components/Alternatif";
 
-export default function PageLayout() {
+export default function DataAlternatif() {
   return (
     <>
       <div className="bg-white text-center">
@@ -10,7 +10,7 @@ export default function PageLayout() {
             <SideBar />
           </div>
           <div className="col-9">
-            <Dashboard />
+            <Alternatif />
           </div>
         </div>
       </div>

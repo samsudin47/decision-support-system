@@ -1,7 +1,7 @@
 import SideBar from "../components/SideBar";
-import Dashboard from "../components/Dashboards";
+import Kriteria from "../components/Kriteria";
 
-export default function PageLayout() {
+export default function DataKriteria() {
   return (
     <>
       <div className="bg-white text-center">
@@ -10,7 +10,7 @@ export default function PageLayout() {
             <SideBar />
           </div>
           <div className="col-9">
-            <Dashboard />
+            <Kriteria />
           </div>
         </div>
       </div>

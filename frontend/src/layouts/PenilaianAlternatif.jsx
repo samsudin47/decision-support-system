@@ -1,7 +1,7 @@
 import SideBar from "../components/SideBar";
-import Dashboard from "../components/Dashboards";
+import HalamanPenilaianAlternatif from "../components/HalamanPenilaianAlternatif";
 
-export default function PageLayout() {
+export default function PenilaianAlternatif() {
   return (
     <>
       <div className="bg-white text-center">
@@ -10,7 +10,7 @@ export default function PageLayout() {
             <SideBar />
           </div>
           <div className="col-9">
-            <Dashboard />
+            <HalamanPenilaianAlternatif />
           </div>
         </div>
       </div>

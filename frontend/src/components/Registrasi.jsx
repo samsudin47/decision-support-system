@@ -37,8 +37,12 @@ export default function Registrasi() {
       <div className="layout-regis">
         <div className="container">
           <div className="pt-5 ">
-            <h2 className="text-center judul text-light ">Decision Support System</h2>
-            <h3 className="text-center judul text-warning">Simple Additive Weighting</h3>
+            <h2 className="text-center judul text-light ">
+              Decision Support System
+            </h2>
+            <h3 className="text-center judul text-warning">
+              Simple Additive Weighting
+            </h3>
             <div className="mt-4">
               <div className="row justify-content-center mb-5">
                 <div className="col-md d-flex justify-content-center">
@@ -46,17 +50,38 @@ export default function Registrasi() {
                 </div>
                 <div className="col-md">
                   <div className="d-flex justify-content-center">
-                    <form onSubmit={handleSubmit} className="w-75 p-3 m-3 shadow rounded-3 bg-light">
-                      <h3 className="text-center judul text-dark">Registrasi New User</h3>
+                    <form
+                      onSubmit={handleSubmit}
+                      className="w-75 p-3 m-3 shadow rounded-3 bg-light"
+                    >
+                      <h3 className="text-center judul text-dark">
+                        Registrasi New User
+                      </h3>
                       <div className="">
                         <label htmlFor="inputUserName" className="form-label">
                           Name
                         </label>
-                        <input type="text" id="inputUsername" onChange={(e) => setValues({ ...values, name: e.target.value })} className="form-control" placeholder="Username" />
+                        <input
+                          type="text"
+                          id="inputUsername"
+                          onChange={(e) =>
+                            setValues({ ...values, name: e.target.value })
+                          }
+                          className="form-control"
+                          placeholder="Username"
+                        />
                         <label htmlFor="inputEmail" className="form-label">
                           Email
                         </label>
-                        <input type="email" id="inputEmail" onChange={(e) => setValues({ ...values, email: e.target.value })} className="form-control" placeholder="Email" />
+                        <input
+                          type="email"
+                          id="inputEmail"
+                          onChange={(e) =>
+                            setValues({ ...values, email: e.target.value })
+                          }
+                          className="form-control"
+                          placeholder="Email"
+                        />
                         <label htmlFor="inputPassword" className="form-label">
                           Password
                         </label>
@@ -64,7 +89,9 @@ export default function Registrasi() {
                           type={showPassword ? "password" : "text"}
                           id="password"
                           name="Password"
-                          onChange={(e) => setValues({ ...values, password: e.target.value })}
+                          onChange={(e) =>
+                            setValues({ ...values, password: e.target.value })
+                          }
                           className="form-control"
                           placeholder="Password"
                           autoComplete="current-password"
@@ -95,7 +122,8 @@ export default function Registrasi() {
                         <br />
                         <span className="d-flex justify-content-center p-2">
                           <Link to={"/login"} className="text-dark">
-                            Sudah punya akun? <span className="text-danger">Silahkan masuk</span>
+                            Sudah punya akun?{" "}
+                            <span className="text-danger">Silahkan masuk</span>
                           </Link>
                         </span>
                         <br />
@@ -108,11 +136,24 @@ export default function Registrasi() {
             <div className="about">
               <h4 className="subjudul text-white">Decision Support System</h4>
               <p className="text-white lead paragraph">
-                Adalah sebuah sistem informasi berbasis komputer yang membantu proses pengambilan keputusan dalam sebuah organisasi atau bisnis. DSS dirancang untuk mendukung pengambilan keputusan yang lebih baik, terutama dalam situasi
-                yang kompleks dan tidak terstruktur, di mana pengambilan keputusan memerlukan analisis data yang mendalam. <span className="h5 fst-italic">Ciri-ciri Utama DSS :</span> Interaktif: DSS memungkinkan pengguna untuk berinteraksi
-                dengan data dan model analitis untuk menghasilkan berbagai alternatif keputusan. Data-driven: DSS menggunakan data dari berbagai sumber seperti database internal, data historis, dan informasi eksternal) untuk mendukung
-                pengambilan keputusan. Model-driven: DSS sering kali memiliki kemampuan untuk menjalankan model-model matematis atau simulasi yang membantu memprediksi hasil dari berbagai keputusan. Fleksibilitas: DSS dirancang untuk dapat
-                diadaptasi dan digunakan dalam berbagai situasi dan kebutuhan, mulai dari analisis bisnis, perencanaan strategis, hingga pengambilan keputusan taktis.
+                Adalah sebuah sistem informasi berbasis komputer yang membantu
+                proses pengambilan keputusan dalam sebuah organisasi atau
+                bisnis. DSS dirancang untuk mendukung pengambilan keputusan yang
+                lebih baik, terutama dalam situasi yang kompleks dan tidak
+                terstruktur, di mana pengambilan keputusan memerlukan analisis
+                data yang mendalam.{" "}
+                <span className="h5 fst-italic">Ciri-ciri Utama DSS :</span>{" "}
+                Interaktif: DSS memungkinkan pengguna untuk berinteraksi dengan
+                data dan model analitis untuk menghasilkan berbagai alternatif
+                keputusan. Data-driven: DSS menggunakan data dari berbagai
+                sumber seperti database internal, data historis, dan informasi
+                eksternal) untuk mendukung pengambilan keputusan. Model-driven:
+                DSS sering kali memiliki kemampuan untuk menjalankan model-model
+                matematis atau simulasi yang membantu memprediksi hasil dari
+                berbagai keputusan. Fleksibilitas: DSS dirancang untuk dapat
+                diadaptasi dan digunakan dalam berbagai situasi dan kebutuhan,
+                mulai dari analisis bisnis, perencanaan strategis, hingga
+                pengambilan keputusan taktis.
               </p>
             </div>
             <div className="section-apps row justify-content-center rounded-3">
