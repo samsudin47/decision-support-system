@@ -52,7 +52,7 @@ export default function TableAlternatif() {
               </form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={handleClose}>
+              <Button variant="danger" onClick={handleClose}>
                 Close
               </Button>
               <Button variant="primary" onClick={handleClose}>

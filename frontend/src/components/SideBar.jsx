@@ -57,13 +57,13 @@ export default function SideBar() {
                 </Link>
               </li>
               <li className="mb-4">
-                <Link className="sidebar" to="#">
+                <Link className="sidebar" to={"/proseshitung"}>
                   <SiProcesswire className="me-3 text-white" />
                   Proses Hitung
                 </Link>
               </li>
               <li className="mb-4">
-                <Link className="sidebar" to="#">
+                <Link className="sidebar" to={"/hasilkeputusan"}>
                   <AiFillPrinter className="me-3 text-white" />
                   Data Hasil Keputusan
                 </Link>

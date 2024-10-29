@@ -5,6 +5,8 @@ import PageLayout from "./layouts/PageLayout";
 import DataAlternatif from "./layouts/DataAlternatif";
 import DataKriteria from "./layouts/DataKriteria";
 import PenilaianAlternatif from "./layouts/PenilaianAlternatif";
+import ProsesHitung from "./layouts/ProsesHitung";
+import DataHasilKeputusan from "./layouts/DataHasilKeputusan";
 
 const App = () => {
   return (
@@ -20,6 +22,8 @@ const App = () => {
             path="/penilaianAlternatif"
             element={<PenilaianAlternatif />}
           />
+          <Route path="/proseshitung" element={<ProsesHitung />} />
+          <Route path="/hasilkeputusan" element={<DataHasilKeputusan />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -160,20 +160,25 @@ a {
 
 #action{
   cursor: pointer;
-  color: #42548d;
-  
+  color: #42548d; 
+}
+
+#action-cetak{
+  color: #ffff;
 }
 
 .material-style{
   margin: 50px 50px 50px 100px;
   transform: 'translate(-50%, -50%)';
-  width: 80%;
-  height: 50%;
+  width: auto;
+  height: auto;
   /* background-color: 'background.paper'; */
   background-color: #fff;
   border: '2px solid #0000';
   box-shadow: 24;
-  
+  max-height: 80vh; /* Adjust this value to your needs */
+  overflow-y: auto;
+  padding: 20px;
 }
 
 @media (max-width: 768px) {
