@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import axios from "axios";
+import { ClipLoader } from "react-spinners";
 
 export default function Registrasi() {
   // State variables for username, email, passwords and error message
@@ -21,15 +22,24 @@ export default function Registrasi() {
     password: "",
   });
 
+  const [loading, setLoading] = useState(false); // state untuk loading
   const [showPassword, setShowPassword] = useState("true");
 
   // function to handle form submisson
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading true saat disubmit
     axios
-      .post("http://localhost:3000/register", values)
-      .then((res) => console.log(res))
-      .then((err) => console.log(err));
+      .post("http://localhost:9000/api/cms/auth/register", values)
+      .then((res) => {
+        console.log("Registrasi berhasil :", res.data);
+        setLoading(false); // matikan loading setelah response diterima
+        window.location.href = "/login";
+      })
+      .catch((err) => {
+        console.error("Registrasi gagal:", err.response?.data || err.message);
+        setLoading(false); // matikan loading jika ada error
+      });
   };
 
   return (
@@ -116,9 +126,15 @@ export default function Registrasi() {
                           )}
                         </span>
                         <br />
-                        <button type="submit" className="btn btn-primary">
-                          Register
-                        </button>
+                        {loading ? (
+                          <div className="text-center spinner my-3">
+                            <ClipLoader size={50} color="#36d7b7" />
+                          </div>
+                        ) : (
+                          <button type="submit" className="btn btn-primary">
+                            Register
+                          </button>
+                        )}
                         <br />
                         <span className="d-flex justify-content-center p-2">
                           <Link to={"/login"} className="text-dark">

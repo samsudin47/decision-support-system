@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Anek+Devanagari:wght@100..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sacramento&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Anton&family=Bungee&family=Bungee+Shade&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Anton&display=swap");
 
 body {
   font-family: "Anek Devanagari", sans-serif;
@@ -75,7 +75,6 @@ a {
   font-size: 1rem;
 }
 
-
 .navbar-toggler {
   background-color: #fff;
   border: none;
@@ -109,7 +108,7 @@ a {
   top: 10px;
 }
 
-.icon-class{
+.icon-class {
   cursor: pointer;
 }
 
@@ -121,6 +120,7 @@ a {
 
 .icon-wrapper .tooltip-text {
   visibility: hidden;
+  width: 100px;
   background-color: #555;
   color: #fff;
   text-align: center;
@@ -141,7 +141,7 @@ a {
 }
 
 .tooltip-text::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 100%; /* Arrow on the top */
   left: 50%;
@@ -151,34 +151,41 @@ a {
   border-color: #555 transparent transparent transparent;
 }
 
-.samma{
+.samma {
   font-family: "Anton", sans-serif;
   font-weight: 400;
   font-style: normal;
   color: darkblue;
 }
 
-#action{
+#action {
   cursor: pointer;
-  color: #42548d; 
+  color: #42548d;
 }
 
-#action-cetak{
+#action-cetak {
   color: #ffff;
 }
 
-.material-style{
+.material-style {
   margin: 50px 50px 50px 100px;
-  transform: 'translate(-50%, -50%)';
+  transform: "translate(-50%, -50%)";
   width: auto;
   height: auto;
   /* background-color: 'background.paper'; */
   background-color: #fff;
-  border: '2px solid #0000';
+  border: "2px solid #0000";
   box-shadow: 24;
   max-height: 80vh; /* Adjust this value to your needs */
   overflow-y: auto;
   padding: 20px;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
 }
 
 @media (max-width: 768px) {

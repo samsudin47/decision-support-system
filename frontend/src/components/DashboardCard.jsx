@@ -4,11 +4,33 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { useState, useEffect } from "react";
 
 export default function DashboardCard() {
+  const [userName, setUsername] = useState("");
+
+  useEffect(() => {
+    const userName = localStorage.getItem("username");
+    if (userName) {
+      setUsername(userName);
+    }
+  }, []);
   return (
     <>
-      <div className="container text-start pe-5 mt-5 grid gap-3">
+      <div className="container text-start pe-5 mt-3 grid gap-3">
+        {userName ? (
+          <span>
+            {" "}
+            <p className="lead text-start">
+              Hallo <span className="fw-bold">{userName}</span> !, Selamat
+              datang di layanan kami
+              <span className="samma"> sammaHearing</span> silahkan baca panduan
+              untuk dapat memilih Hearing Aid sesuai dengan kebutuhan anda.
+            </p>
+          </span>
+        ) : (
+          <span> </span>
+        )}
         <div className="row align-items-center">
           <div className="col-md p-2 g-col-6">
             <div className="card bg-success text-light">

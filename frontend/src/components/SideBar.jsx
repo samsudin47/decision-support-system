@@ -6,12 +6,20 @@ import { SiProcesswire } from "react-icons/si";
 import { AiFillPrinter } from "react-icons/ai";
 import { LuUsers } from "react-icons/lu";
 import { CiLogout } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(true);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    navigate("/login");
   };
 
   return (
@@ -78,11 +86,9 @@ export default function SideBar() {
                 </Link>
               </li>
               <li className="mb-4">
-                <button className="btn btn-dark">
-                  <Link to={"/login"}>
-                    <CiLogout className="me-3 text-white" />
-                    Log out
-                  </Link>
+                <button className="btn btn-dark" onClick={handleLogout}>
+                  <CiLogout className="me-3 text-white" />
+                  Log out
                 </button>
               </li>
             </ul>

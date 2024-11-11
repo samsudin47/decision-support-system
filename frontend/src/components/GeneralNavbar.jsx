@@ -1,7 +1,16 @@
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
+import { useState, useEffect } from "react";
 
 export default function GeneralNavbar() {
+  const [userName, setUsername] = useState("");
+
+  useEffect(() => {
+    const userName = localStorage.getItem("username");
+    if (userName) {
+      setUsername(userName);
+    }
+  }, []);
   return (
     <>
       <nav className="navbar navbar-expand-lg">
@@ -42,7 +51,7 @@ export default function GeneralNavbar() {
                   name="person-circle-outline"
                   size="large"
                 ></ion-icon>
-                <div className="tooltip-text">users</div>
+                <div className="tooltip-text">{userName}</div>
               </div>
             </Form>
           </div>
