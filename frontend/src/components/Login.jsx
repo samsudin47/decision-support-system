@@ -16,7 +16,8 @@ import { ClipLoader } from "react-spinners";
 
 export default function Login() {
   // State variables for username, email, passwords and error message
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -34,7 +35,8 @@ export default function Login() {
       const response = await axios.post(
         "http://localhost:9000/api/cms/auth/login",
         {
-          email,
+          // email,
+          name,
           password,
         }
       );
@@ -43,9 +45,12 @@ export default function Login() {
       if (response.status === 200) {
         const { token, username } = response.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("username", username);
         setLoading(false);
-        navigate("/");
+        if (localStorage.setItem("username", username)) {
+          navigate("/login");
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       setErrorMessage("Your email or password is incorrect");
@@ -82,12 +87,12 @@ export default function Login() {
                           Name
                         </label>
                         <input
-                          type="email"
-                          id="inputEmail"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          type="text"
+                          id="inputName"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
                           className="form-control"
-                          placeholder="Email"
+                          placeholder="Username"
                         />
                         <label htmlFor="inputPassword" className="form-label">
                           Password

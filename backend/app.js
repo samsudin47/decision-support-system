@@ -8,6 +8,7 @@ const cors = require("cors");
 const db = require("./app/database/database");
 const authRoutes = require("./app/api/auth/router");
 const protectedRoutes = require("./app/api/protected/router");
+const alternativeRoutes = require("./app/api/alternatives/router");
 
 const app = express();
 // konfigurasi cors
@@ -37,5 +38,6 @@ const v1 = "/api";
 
 app.use(`${v1}/cms/auth`, authRoutes);
 app.use(`${v1}/cms/protected`, protectedRoutes);
+app.use(`${v1}/cms/`, alternativeRoutes);
 
 module.exports = app;

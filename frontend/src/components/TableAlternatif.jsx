@@ -1,15 +1,84 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
 import ModalTitle from "react-bootstrap/esm/ModalTitle";
+import axios from "axios";
 
 export default function TableAlternatif() {
   // modal
   const [show, setShow] = useState(false);
+  const [kode, setKode] = useState("");
+  const [name, setName] = useState("");
+  const [selectedAlternatives, setSelectedAlternatives] = useState(null);
+  const [alternatives, setAlternatives] = useState([]); // To store the fetched alternatives
 
+  // fetch all alternatives from backend
+  const fetchAlternatives = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:9000/api/cms/alternatives"
+      );
+      console.log(response.data); // nanti dihapus
+      setAlternatives(response.data);
+    } catch (error) {
+      console.error("Error fetching alternatives:", error);
+    }
+  };
+
+  // Fetch alternatives on component mount
+  useEffect(() => {
+    fetchAlternatives();
+  }, []); // Empty array means this runs once when the component mounts
+
+  // Modal handlers
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setKode("");
+    setName("");
+    setShow(true);
+    setSelectedAlternatives(null);
+    setShow(true);
+  };
+
+  // Create or update alternative handler
+  const handleSave = async () => {
+    const url = selectedAlternatives
+      ? `http://localhost:9000/api/cms/alternatives/${selectedAlternatives.id}`
+      : `http://localhost:9000/api/cms/alternatives`;
+    const method = selectedAlternatives ? "PUT" : "POST";
+    try {
+      const response = await axios({
+        method,
+        url,
+        data: { kode, name },
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (method === "POST") {
+        setAlternatives([...alternatives, response.data]);
+      } else {
+        const updatedAlternatives = alternatives.map((alt) =>
+          alt.id === response.data.id ? response.data : alt
+        );
+        setAlternatives(updatedAlternatives);
+      }
+
+      setShow(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  // Delete alternative
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:9000/api/cms/alternatives/${id}`);
+      setAlternatives(alternatives.filter((alt) => alt.id !== id));
+    } catch (error) {
+      console.error("Error hapus alternative");
+    }
+  };
 
   return (
     <>
@@ -23,7 +92,9 @@ export default function TableAlternatif() {
 
           <Modal show={show} onHide={handleClose}>
             <ModalHeader>
-              <ModalTitle>Add New Alternatif</ModalTitle>
+              <ModalTitle>
+                {selectedAlternatives ? "Edit" : "Add"}Add New Alternatif
+              </ModalTitle>
             </ModalHeader>
             <Modal.Body>
               <form>
@@ -35,6 +106,8 @@ export default function TableAlternatif() {
                     type="kode"
                     className="form-control w-100"
                     id="kode"
+                    value={kode}
+                    onChange={(e) => setKode(e.target.value)}
                     aria-describedby="kodeHelp"
                   />
                 </div>
@@ -46,6 +119,8 @@ export default function TableAlternatif() {
                     type="alternatif"
                     className="form-control w-100"
                     id="alternatif"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     aria-describedby="alternatifHelp"
                   />
                 </div>
@@ -55,14 +130,14 @@ export default function TableAlternatif() {
               <Button variant="danger" onClick={handleClose}>
                 Close
               </Button>
-              <Button variant="primary" onClick={handleClose}>
-                Save Changes
+              <Button variant="primary" onClick={handleSave}>
+                {selectedAlternatives ? "Update" : "Save Changes"}
               </Button>
             </Modal.Footer>
           </Modal>
-
-          {/*  */}
         </div>
+
+        {/* table display */}
         <div className="me-5">
           <table className="table table-striped">
             <thead>
@@ -74,137 +149,38 @@ export default function TableAlternatif() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td scope="row">1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">3</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">4</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">5</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">6</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
+              {alternatives.map((alternative, index) => (
+                <tr key={alternative.id}>
+                  <td scope="row">{index + 1}</td>
+                  <td>{alternative.kode}</td>
+                  <td>{alternative.name}</td>
+                  <td>
+                    <span>
+                      <ion-icon
+                        id="action"
+                        name="create-outline"
+                        size="small"
+                        onClick={() => {
+                          setSelectedAlternatives(alternative);
+                          setKode(alternative.kode);
+                          setName(alternative.name);
+                          handleShow();
+                        }}
+                      ></ion-icon>
+                    </span>
+                    <span>
+                      <ion-icon
+                        id="action"
+                        name="trash-outline"
+                        size="small"
+                        onClick={() => {
+                          handleDelete(alternative.id);
+                        }}
+                      ></ion-icon>
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

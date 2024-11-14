@@ -28,15 +28,15 @@ exports.register = async (req, res) => {
 
 // form login
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, password } = req.body;
 
-  if (!email || !password) {
+  if (!name || !password) {
     return res.status(400).json({ message: "Perlu isi email dan kata sandi" });
   }
 
   try {
     // Cek user
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { name } });
     if (!user) {
       return res.status(404).json({ message: "User tidak tersedia" });
     }
@@ -49,7 +49,7 @@ exports.login = async (req, res) => {
 
     // Create user dan send token
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, name: user.name },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
