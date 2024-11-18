@@ -4,12 +4,112 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Button from "react-bootstrap/Button";
 import TabelPenilaian from "./TabelPenilaian";
+import { useState, useEffect } from "react";
+import Pagination from "./Pagination";
+import axios from "axios";
+import {
+  fetchPenilaianAlternatif,
+  addPenilaianAlternatif,
+  updatePenilaianAlternatif,
+  deletePenilaianAlternatif,
+} from "../services/penilaianAlternatif";
 
 export default function TabelPenilaianAlternatif() {
   // modal with material ui
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // state menyimpan data penilaian dan alternatif
+  const [data, setData] = useState([]);
+  const [alternatives, setAlternatives] = useState([]);
+  const [formValues, setFormValues] = useState({
+    periode: "",
+    alternativeId: "",
+    kriteria: "",
+    nilai: "",
+  });
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // fetch data saat komponen dimuat
+  useEffect(() => {
+    const loadData = async () => {
+      const fetchData = await fetchPenilaianAlternatif();
+      setData(fetchData);
+    };
+    loadData();
+  }, []);
+
+  // ambil data untuk dropdown
+  // useEffect(() => {
+  //   const loadALternatives = async () => {
+  //     const alternativesData = await fetchPenilaianAlternatif();
+  //     setAlternatives(alternativesData);
+  //   };
+  //   loadALternatives();
+  // }, []);
+
+  // Ambil data alternatif dari endpoint API yang benar
+  useEffect(() => {
+    const loadAlternatives = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9000/api/cms/alternatives"
+        ); // Pastikan ini mengarah ke API yang tepat
+        setAlternatives(response.data); // Asumsi data yang diterima adalah daftar alternatif
+      } catch (error) {
+        console.error("Error fetching alternatives:", error);
+      }
+    };
+
+    loadAlternatives();
+  }, []);
+
+  // Fungsi menangani perubahan form
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues({
+      ...formValues({
+        ...formValues,
+        [name]: value,
+      }),
+    });
+  };
+
+  // Fungsi add data
+  const handleAdd = async () => {
+    const newData = await addPenilaianAlternatif(formValues);
+    setData([...data, newData]);
+    handleClose();
+  };
+
+  // Fungsi memperbarui data
+  const handleUpdate = async (id, updatedValues) => {
+    const updatedData = await updatePenilaianAlternatif(id, updatedValues);
+    setData(data.map((item) => (item.id === id ? updatedData : item)));
+  };
+
+  // Fungsi menghapus data
+  const handleDelete = async (id) => {
+    const success = await deletePenilaianAlternatif(id);
+    if (success) {
+      setData(data.filter((item) => item.id !== id));
+    }
+  };
+
+  // Hitung data yang akan ditampilkan berdasarkan halaman aktif
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Menghitung total halaman
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  // Fungsi untuk mengubah halaman
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -53,9 +153,12 @@ export default function TabelPenilaianAlternatif() {
                         <select
                           className="form-select w-100"
                           aria-label="Default select example"
+                          name="periode"
+                          value={formValues.periode}
+                          onChange={handleInputChange}
                         >
                           <option selected>- Pilih -</option>
-                          <option value="1">One</option>
+                          <option value="1"></option>
                           <option value="2">Two</option>
                           <option value="3">Three</option>
                         </select>
@@ -67,11 +170,17 @@ export default function TabelPenilaianAlternatif() {
                         <select
                           className="form-select w-100"
                           aria-label="Default select example"
+                          id="alternatif"
+                          name="alternativeId"
+                          value={formValues.alternativeId}
+                          onChange={handleInputChange}
                         >
                           <option selected>- Pilih -</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
+                          {alternatives.map((alt) => (
+                            <option key={alt.id} value={alt.id}>
+                              {alt.name}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </form>
@@ -81,7 +190,7 @@ export default function TabelPenilaianAlternatif() {
                     <Button variant="danger me-3" onClick={handleClose}>
                       Close
                     </Button>
-                    <Button variant="primary me-2" onClick={handleClose}>
+                    <Button variant="primary me-2" onClick={handleAdd}>
                       Save Changes
                     </Button>
                   </div>
@@ -103,184 +212,42 @@ export default function TabelPenilaianAlternatif() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td scope="row">1</td>
-                <td>2022</td>
-                <td>Produk 1</td>
-                <td>Daya Tahan</td>
-                <td>5</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">2</td>
-                <td>2022</td>
-                <td>Produk 2</td>
-                <td>Daya Tahan</td>
-                <td>5</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">3</td>
-                <td>2022</td>
-                <td>Produk 3</td>
-                <td>Daya Tahan</td>
-                <td>5</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">4</td>
-                <td>2022</td>
-                <td>Produk 4</td>
-                <td>Daya Tahan</td>
-                <td>5</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">5</td>
-                <td>2022</td>
-                <td>Produk 5</td>
-                <td>Daya Tahan</td>
-                <td>5</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">6</td>
-                <td>2022</td>
-                <td>Produk 6</td>
-                <td>Daya Tahan</td>
-                <td>5</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
+              {currentItems.map((item, index) => (
+                <tr key={item.id}>
+                  <td scope="row">
+                    {(currentPage - 1) * itemsPerPage + index + 1}
+                  </td>
+                  <td>{item.periode}</td>
+                  <td>{item.alternativeId}</td>
+                  <td>{item.kriteria}</td>
+                  <td>{item.nilai}</td>
+                  <td>
+                    <span>
+                      <ion-icon
+                        id="action"
+                        name="create-outline"
+                        size="small"
+                        onClick={() => handleUpdate(item.id, formValues)}
+                      ></ion-icon>
+                    </span>
+                    <span>
+                      <ion-icon
+                        id="action"
+                        name="trash-outline"
+                        size="small"
+                        onClick={() => handleDelete(item.id)}
+                      ></ion-icon>
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        </div>
-        <div className="next">
-          <div className="me-5 d-flex justify-content-end">
-            <nav aria-label="...">
-              <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    Previous
-                  </a>
-                </li>
-                <li className="page-item active" aria-current="page">
-                  <a className="page-link" href="#">
-                    1
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    2
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    3
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    Next
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={paginate}
+          />
         </div>
       </div>
     </>
