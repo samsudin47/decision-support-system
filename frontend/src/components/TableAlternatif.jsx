@@ -4,22 +4,35 @@ import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
 import ModalTitle from "react-bootstrap/esm/ModalTitle";
 import axios from "axios";
+import Pagination from "./Pagination";
 
 export default function TableAlternatif() {
-  // modal
+  // modal state
   const [show, setShow] = useState(false);
+  const [id, setId] = useState("");
   const [kode, setKode] = useState("");
   const [name, setName] = useState("");
-  const [selectedAlternatives, setSelectedAlternatives] = useState(null);
-  const [alternatives, setAlternatives] = useState([]); // To store the fetched alternatives
+  const [alternatives, setAlternatives] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(alternatives.length / itemsPerPage);
 
-  // fetch all alternatives from backend
+  // show data based on page
+  const currentData = alternatives.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Fetch all alternatives from API
   const fetchAlternatives = async () => {
     try {
       const response = await axios.get(
         "http://localhost:9000/api/cms/alternatives"
       );
-      console.log(response.data); // nanti dihapus
       setAlternatives(response.data);
     } catch (error) {
       console.error("Error fetching alternatives:", error);
@@ -29,44 +42,61 @@ export default function TableAlternatif() {
   // Fetch alternatives on component mount
   useEffect(() => {
     fetchAlternatives();
-  }, []); // Empty array means this runs once when the component mounts
+  }, []);
 
   // Modal handlers
   const handleClose = () => setShow(false);
-  const handleShow = () => {
-    setKode("");
-    setName("");
-    setShow(true);
-    setSelectedAlternatives(null);
+  const handleShow = (alternative = {}) => {
+    setId(alternative.id || "");
+    setKode(alternative.kode || ""); // Set Kode for update or empty for new
+    setName(alternative.name || ""); // Set Name for update or empty for new
     setShow(true);
   };
 
   // Create or update alternative handler
   const handleSave = async () => {
-    const url = selectedAlternatives
-      ? `http://localhost:9000/api/cms/alternatives/${selectedAlternatives.id}`
-      : `http://localhost:9000/api/cms/alternatives`;
-    const method = selectedAlternatives ? "PUT" : "POST";
     try {
-      const response = await axios({
-        method,
-        url,
-        data: { kode, name },
-        headers: { "Content-Type": "application/json" },
-      });
+      const url = "http://localhost:9000/api/cms/alternatives";
+      const payload = { kode, name }; // Data to be sent to the server
 
-      if (method === "POST") {
-        setAlternatives([...alternatives, response.data]);
-      } else {
-        const updatedAlternatives = alternatives.map((alt) =>
-          alt.id === response.data.id ? response.data : alt
+      if (id) {
+        // If ID exists, it's an update
+        const response = await axios.put(`${url}/${id}`, payload);
+
+        // Update the alternatives list with the updated alternative
+        setAlternatives(
+          alternatives.map((alt) =>
+            alt.id === response.data.id ? response.data : alt
+          )
         );
-        setAlternatives(updatedAlternatives);
+
+        alert("Alternatif berhasil diperbarui!"); // Alert success for update
+      } else {
+        const response = await axios.post(url, payload);
+        setAlternatives([...alternatives, response.data]);
+        alert("Alternatif berhasil ditambahkan!");
       }
 
       setShow(false);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error saving alternative:", error);
+      if (error.response) {
+        if (
+          error.response.status === 400 &&
+          error.response.data.message ===
+            "Kode sudah digunakan oleh alternatif lain"
+        ) {
+          alert(
+            "Kode sudah digunakan oleh alternatif lain, silakan pilih kode yang berbeda."
+          );
+        } else {
+          alert(
+            "Kode sudah digunakan oleh alternatif lain, silakan pilih kode yang berbeda."
+          );
+        }
+      } else {
+        alert("Tidak ada respons dari server, silakan coba lagi.");
+      }
     }
   };
 
@@ -76,7 +106,8 @@ export default function TableAlternatif() {
       await axios.delete(`http://localhost:9000/api/cms/alternatives/${id}`);
       setAlternatives(alternatives.filter((alt) => alt.id !== id));
     } catch (error) {
-      console.error("Error hapus alternative");
+      console.error("Error deleting alternative:", error);
+      alert("Terjadi kesalahan saat menghapus data.");
     }
   };
 
@@ -84,17 +115,14 @@ export default function TableAlternatif() {
     <>
       <div className="container mt-5">
         <div className="text-start">
-          {/*  */}
-          <Button className="btn btn-primary mb-4" onClick={handleShow}>
+          <Button className="btn btn-primary mb-4" onClick={() => handleShow()}>
             <ion-icon name="add-outline" size="small"></ion-icon>
             Add Alternatif
           </Button>
 
           <Modal show={show} onHide={handleClose}>
             <ModalHeader>
-              <ModalTitle>
-                {selectedAlternatives ? "Edit" : "Add"}Add New Alternatif
-              </ModalTitle>
+              <ModalTitle>{id ? "Edit" : "Add"} Alternatif</ModalTitle>
             </ModalHeader>
             <Modal.Body>
               <form>
@@ -103,12 +131,11 @@ export default function TableAlternatif() {
                     Kode
                   </label>
                   <input
-                    type="kode"
+                    type="text"
                     className="form-control w-100"
                     id="kode"
                     value={kode}
                     onChange={(e) => setKode(e.target.value)}
-                    aria-describedby="kodeHelp"
                   />
                 </div>
                 <div className="mb-3">
@@ -116,12 +143,11 @@ export default function TableAlternatif() {
                     Nama Alternatif
                   </label>
                   <input
-                    type="alternatif"
+                    type="text"
                     className="form-control w-100"
                     id="alternatif"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    aria-describedby="alternatifHelp"
                   />
                 </div>
               </form>
@@ -131,13 +157,13 @@ export default function TableAlternatif() {
                 Close
               </Button>
               <Button variant="primary" onClick={handleSave}>
-                {selectedAlternatives ? "Update" : "Save Changes"}
+                {id ? "Update" : "Save Changes"}
               </Button>
             </Modal.Footer>
           </Modal>
         </div>
 
-        {/* table display */}
+        {/* Table Display */}
         <div className="me-5">
           <table className="table table-striped">
             <thead>
@@ -149,33 +175,26 @@ export default function TableAlternatif() {
               </tr>
             </thead>
             <tbody>
-              {alternatives.map((alternative, index) => (
+              {currentData.map((alternative, index) => (
                 <tr key={alternative.id}>
-                  <td scope="row">{index + 1}</td>
+                  <td scope="row">
+                    {(currentPage - 1) * itemsPerPage + index + 1}
+                  </td>
                   <td>{alternative.kode}</td>
                   <td>{alternative.name}</td>
                   <td>
                     <span>
                       <ion-icon
-                        id="action"
                         name="create-outline"
                         size="small"
-                        onClick={() => {
-                          setSelectedAlternatives(alternative);
-                          setKode(alternative.kode);
-                          setName(alternative.name);
-                          handleShow();
-                        }}
+                        onClick={() => handleShow(alternative)}
                       ></ion-icon>
                     </span>
                     <span>
                       <ion-icon
-                        id="action"
                         name="trash-outline"
                         size="small"
-                        onClick={() => {
-                          handleDelete(alternative.id);
-                        }}
+                        onClick={() => handleDelete(alternative.id)}
                       ></ion-icon>
                     </span>
                   </td>
@@ -184,39 +203,11 @@ export default function TableAlternatif() {
             </tbody>
           </table>
         </div>
-        <div className="next">
-          <div className="me-5 d-flex justify-content-end">
-            <nav aria-label="...">
-              <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    Previous
-                  </a>
-                </li>
-                <li className="page-item active" aria-current="page">
-                  <a className="page-link" href="#">
-                    1
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    2
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    3
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    Next
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );

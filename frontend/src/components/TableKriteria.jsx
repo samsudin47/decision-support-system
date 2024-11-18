@@ -1,15 +1,115 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import ModalHeader from "react-bootstrap/esm/ModalHeader";
 import ModalTitle from "react-bootstrap/esm/ModalTitle";
+import axios from "axios";
+import Pagination from "./Pagination";
 
 export default function TableKriteria() {
-  // modal
+  // state
   const [show, setShow] = useState(false);
+  const [id, setId] = useState("");
+  const [kode, setKode] = useState("");
+  const [kriteria, setKriteria] = useState("");
+  const [bobot, setBobot] = useState("");
+  const [type, setType] = useState("");
+  const [criterias, setCriterias] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemPerPage = 5;
+  const totalPages = Math.ceil(criterias.length / itemPerPage);
+
+  // Fetch all kriteria from API
+  const fetchCriteria = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:9000/api/cms/criteria"
+      );
+      setCriterias(response.data);
+    } catch (error) {
+      console.error("Error fetching criteria :", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCriteria();
+  }, []);
+
+  // pagination
+  const currentData = criterias.slice(
+    (currentPage - 1) * itemPerPage,
+    currentPage * itemPerPage
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = (criteria = {}) => {
+    setId(criteria.id || "");
+    setKode(criteria.kode || "");
+    setKriteria(criteria.kriteria || "");
+    setBobot(criteria.bobot || "");
+    setType(criteria.type || "");
+    setShow(true);
+  };
+
+  // create and update criteria
+  const handleSave = async () => {
+    console.log("Payload:", { kode, kriteria, bobot, type });
+    try {
+      const url = "http://localhost:9000/api/cms/criteria";
+      const payload = { kode, kriteria, bobot, type };
+
+      if (id) {
+        const response = await axios.put(`${url}/${id}`, payload);
+
+        setCriterias(
+          criterias.map((criteria) =>
+            criteria.id === response.data.id ? response.data : criteria
+          )
+        );
+        alert("Alternatif berhasil diperbarui");
+      } else {
+        const response = await axios.post(url, payload);
+        setCriterias([...criterias, response.data]);
+        alert("Kriteria berhasil ditambahkan");
+      }
+
+      setShow(false);
+    } catch (error) {
+      console.error("Error saving criteria:", error);
+      if (error.response) {
+        if (
+          error.response.status === 400 &&
+          error.response.data.message ===
+            "Kode sudah digunakan oleh kriteria lain"
+        ) {
+          alert(
+            "Kode sudah digunakan oleh kriteria lain, silakan pilih kode yang berbeda."
+          );
+        } else {
+          alert(
+            "Kode sudah digunakan oleh kriteria lain, silakan pilih kode yang berbeda."
+          );
+        }
+      } else {
+        alert("Tidak ada respons dari server, silakan coba lagi.");
+      }
+    }
+  };
+
+  // Delete criteria
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:9000/api/cms/criteria/${id}`);
+      setCriterias(criterias.filter((criteria) => criteria.id !== id));
+    } catch (error) {
+      console.error("Error deleting kriteria", error);
+      alert("Terjadi kesalahan pada saat menghapus kriteria");
+    }
+  };
   return (
     <>
       <div className="container mt-5">
@@ -35,6 +135,8 @@ export default function TableKriteria() {
                     className="form-control w-100"
                     id="kode"
                     aria-describedby="kodeHelp"
+                    value={kode}
+                    onChange={(e) => setKode(e.target.value.trim())}
                   />
                 </div>
                 <div className="mb-3">
@@ -46,6 +148,8 @@ export default function TableKriteria() {
                     className="form-control w-100"
                     id="kriteria"
                     aria-describedby="kriteriaHelp"
+                    value={kriteria}
+                    onChange={(e) => setKriteria(e.target.value)}
                   />
                 </div>
                 <div className="mb-3">
@@ -59,7 +163,24 @@ export default function TableKriteria() {
                     aria-describedby="kriteriaHelp"
                     min={0}
                     step={1}
+                    value={bobot}
+                    onChange={(e) => setBobot(e.target.value)}
                   />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="typeKriteria" className="form-label">
+                    Atribut
+                  </label>
+                  <select
+                    className="form-select w-100"
+                    id="typeKriteria"
+                    aria-describedby="typeKriteriaHelp"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                  >
+                    <option value="cost">Cost</option>
+                    <option value="benefit">Benefit</option>
+                  </select>
                 </div>
               </form>
             </Modal.Body>
@@ -67,14 +188,15 @@ export default function TableKriteria() {
               <Button variant="danger" onClick={handleClose}>
                 Close
               </Button>
-              <Button variant="primary" onClick={handleClose}>
-                Save Changes
+              <Button variant="primary" onClick={handleSave}>
+                {id ? "Update" : "Save Changes"}
               </Button>
             </Modal.Footer>
           </Modal>
 
           {/*  */}
         </div>
+        {/* Table Display Kriteria */}
         <div className="me-5">
           <table className="table table-striped">
             <thead>
@@ -83,183 +205,49 @@ export default function TableKriteria() {
                 <th scope="col">Kode</th>
                 <th scope="col">Kriteria</th>
                 <th scope="col">Bobot</th>
+                <th scope="col">Atribut</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td scope="row">1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>2</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>2</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">3</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>2</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">4</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>2</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">5</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>2</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    {"  "}
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
-              <tr>
-                <td scope="row">6</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>2</td>
-                <td>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="create-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                  <span>
-                    <ion-icon
-                      id="action"
-                      name="trash-outline"
-                      size="small"
-                    ></ion-icon>
-                  </span>
-                </td>
-              </tr>
+              {currentData.map((criteria, index) => (
+                <tr key={criteria.id}>
+                  <td scope="row">
+                    {(currentPage - 1) * itemPerPage + index + 1}
+                  </td>
+                  <td>{criteria.kode}</td>
+                  <td>{criteria.kriteria}</td>
+                  <td>{criteria.bobot}</td>
+                  <td>{criteria.type}</td>
+                  <td>
+                    <span>
+                      <ion-icon
+                        id="action"
+                        name="create-outline"
+                        size="small"
+                        onClick={() => handleShow(criteria)}
+                      ></ion-icon>
+                    </span>
+                    <span>
+                      {"  "}
+                      <ion-icon
+                        id="action"
+                        name="trash-outline"
+                        size="small"
+                        onClick={() => handleDelete(criteria.id)}
+                      ></ion-icon>
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-        <div className="next">
-          <div className="me-5 d-flex justify-content-end">
-            <nav aria-label="...">
-              <ul className="pagination">
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    Previous
-                  </a>
-                </li>
-                <li className="page-item active" aria-current="page">
-                  <a className="page-link" href="#">
-                    1
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    2
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    3
-                  </a>
-                </li>
-                <li className="page-item">
-                  <a className="page-link" href="#">
-                    Next
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </>
   );

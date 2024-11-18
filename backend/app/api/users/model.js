@@ -22,7 +22,7 @@ const User = sequelize.define(
     },
   },
   {
-    tableName: "decision_support_system",
+    tableName: "data_user",
     timestamps: true,
   }
 );

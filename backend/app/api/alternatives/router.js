@@ -6,6 +6,7 @@ const {
   updateAlternative,
   deleteAlternative,
 } = require("./controller");
+
 const router = express.Router();
 
 router.post("/alternatives", createAlternative);

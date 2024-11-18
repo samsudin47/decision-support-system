@@ -9,12 +9,13 @@ const db = require("./app/database/database");
 const authRoutes = require("./app/api/auth/router");
 const protectedRoutes = require("./app/api/protected/router");
 const alternativeRoutes = require("./app/api/alternatives/router");
+const criteriaRoutes = require("./app/api/criteria/router");
 
 const app = express();
 // konfigurasi cors
 const corsOption = {
   origin: "http://localhost:5173",
-  methods: "GET, POST, DELETE,",
+  methods: "GET, POST, DELETE, PUT",
   allowHeaders: "Content-Type, Authorization",
 };
 
@@ -39,5 +40,6 @@ const v1 = "/api";
 app.use(`${v1}/cms/auth`, authRoutes);
 app.use(`${v1}/cms/protected`, protectedRoutes);
 app.use(`${v1}/cms/`, alternativeRoutes);
+app.use(`${v1}/cms/`, criteriaRoutes);
 
 module.exports = app;
