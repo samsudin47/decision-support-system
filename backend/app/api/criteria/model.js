@@ -15,7 +15,7 @@ const Criteria = sequelize.define("Criteria", {
       notEmpty: true,
     },
   },
-  kriteria: {
+  kriteriaId: {
     type: DataTypes.STRING,
     allowNull: false,
   },

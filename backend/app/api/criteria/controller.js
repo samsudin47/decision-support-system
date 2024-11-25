@@ -3,8 +3,8 @@ const Criteria = require("./model");
 // Controller untuk membuat kriteria baru
 const createCriteria = async (req, res) => {
   try {
-    const { kode, kriteria, bobot, type } = req.body;
-    const criteria = await Criteria.create({ kode, kriteria, bobot, type });
+    const { kode, kriteriaId, bobot, type } = req.body;
+    const criteria = await Criteria.create({ kode, kriteriaId, bobot, type });
     res.status(201).json(criteria);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -40,7 +40,7 @@ const getKriteriaById = async (req, res) => {
 const updateCriteria = async (req, res) => {
   try {
     const { id } = req.params;
-    const { kode, kriteria, bobot, type } = req.body;
+    const { kode, kriteriaId, bobot, type } = req.body;
 
     const existingCriteria = await Criteria.findOne({
       where: { kode },
@@ -56,7 +56,7 @@ const updateCriteria = async (req, res) => {
 
     if (criteria) {
       criteria.kode = kode;
-      criteria.kriteria = kriteria;
+      criteria.kriteriaId = kriteriaId;
       criteria.bobot = bobot;
       criteria.type = type;
       await criteria.save();

@@ -1,9 +1,9 @@
+// eslint-disable-next-line no-unused-vars
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import Button from "react-bootstrap/Button";
-import TabelPenilaian from "./TabelPenilaian";
 import { useState, useEffect } from "react";
 import Pagination from "./Pagination";
 import axios from "axios";
@@ -16,19 +16,26 @@ import {
 
 export default function TabelPenilaianAlternatif() {
   // modal with material ui
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  // state menyimpan data penilaian dan alternatif
+  const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [alternatives, setAlternatives] = useState([]);
+  const [criteria, setCriteria] = useState([]);
   const [formValues, setFormValues] = useState({
     periode: "",
     alternativeId: "",
-    kriteria: "",
+    kriteriaId: "",
     nilai: "",
   });
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setFormValues({
+      periode: "",
+      alternativeId: "",
+      kriteriaId: "",
+      nilai: "",
+    });
+  };
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,52 +45,71 @@ export default function TabelPenilaianAlternatif() {
   useEffect(() => {
     const loadData = async () => {
       const fetchData = await fetchPenilaianAlternatif();
+      console.log("Fetched Data:", fetchData);
       setData(fetchData);
     };
     loadData();
   }, []);
 
-  // ambil data untuk dropdown
-  // useEffect(() => {
-  //   const loadALternatives = async () => {
-  //     const alternativesData = await fetchPenilaianAlternatif();
-  //     setAlternatives(alternativesData);
-  //   };
-  //   loadALternatives();
-  // }, []);
-
   // Ambil data alternatif dari endpoint API yang benar
   useEffect(() => {
     const loadAlternatives = async () => {
       try {
+        console.log("Fetching Alternatives");
         const response = await axios.get(
           "http://localhost:9000/api/cms/alternatives"
         ); // Pastikan ini mengarah ke API yang tepat
+        console.log("Response Data:", response.data);
         setAlternatives(response.data); // Asumsi data yang diterima adalah daftar alternatif
       } catch (error) {
         console.error("Error fetching alternatives:", error);
+        console.log("Error Details:", error);
       }
     };
-
     loadAlternatives();
+  }, []);
+
+  useEffect(() => {
+    const loadCriteria = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:9000/api/cms/criteria"
+        );
+        setCriteria(response.data);
+      } catch (error) {
+        console.error("error fetching data criteria and alternatif", error);
+      }
+    };
+    loadCriteria();
   }, []);
 
   // Fungsi menangani perubahan form
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormValues({
-      ...formValues({
-        ...formValues,
-        [name]: value,
-      }),
+      ...formValues,
+      [name]: value,
     });
   };
 
   // Fungsi add data
   const handleAdd = async () => {
-    const newData = await addPenilaianAlternatif(formValues);
-    setData([...data, newData]);
-    handleClose();
+    try {
+      if (
+        !formValues.periode ||
+        !formValues.alternativeId ||
+        !formValues.kriteriaId ||
+        !formValues.nilai
+      ) {
+        alert("Pastikan semua field terisi.");
+        return;
+      }
+      const newData = await addPenilaianAlternatif(formValues); // Pastikan fungsi ini benar
+      setData([...data, newData]);
+      handleClose();
+    } catch (error) {
+      console.error("Error adding data:", error);
+    }
   };
 
   // Fungsi memperbarui data
@@ -150,18 +176,14 @@ export default function TabelPenilaianAlternatif() {
                         <label htmlFor="periode" className="form-label">
                           Periode
                         </label>
-                        <select
-                          className="form-select w-100"
-                          aria-label="Default select example"
+                        <input
+                          type="date"
+                          className="form-control"
+                          data-date-end-date="0d"
                           name="periode"
                           value={formValues.periode}
                           onChange={handleInputChange}
-                        >
-                          <option selected>- Pilih -</option>
-                          <option value="1"></option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
-                        </select>
+                        ></input>
                       </div>
                       <div className="mb-3">
                         <label htmlFor="alternatif" className="form-label">
@@ -183,17 +205,56 @@ export default function TabelPenilaianAlternatif() {
                           ))}
                         </select>
                       </div>
+                      <div className="mb-3">
+                        <label htmlFor="alternatif" className="form-label">
+                          Kriteria
+                        </label>
+                        <select
+                          className="form-select w-100"
+                          aria-label="Default select example"
+                          id="kriteria"
+                          name="kriteriaId"
+                          value={formValues.kriteriaId}
+                          onChange={handleInputChange}
+                        >
+                          <option selected>- Pilih -</option>
+                          {criteria.map((crit) => (
+                            <option key={crit.id} value={crit.id}>
+                              {crit.kriteriaId}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="mb-3">
+                        <label htmlFor="alternatif" className="form-label">
+                          Nilai
+                        </label>
+                        <select
+                          className="form-select"
+                          aria-label="Default select example"
+                          id="nilai"
+                          name="nilai"
+                          value={formValues.nilai}
+                          onChange={handleInputChange}
+                        >
+                          <option selected>-- Pilih --</option>
+                          {Array.from({ length: 9 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="button text-end mt-5">
+                        <Button variant="danger me-4" onClick={handleClose}>
+                          Close
+                        </Button>
+                        <Button variant="primary" onClick={handleAdd}>
+                          Save Changes
+                        </Button>
+                      </div>
                     </form>
-                    <TabelPenilaian />
                   </Typography>
-                  <div className="button text-end me-5">
-                    <Button variant="danger me-3" onClick={handleClose}>
-                      Close
-                    </Button>
-                    <Button variant="primary me-2" onClick={handleAdd}>
-                      Save Changes
-                    </Button>
-                  </div>
                 </Box>
               </Modal>
             </div>
@@ -218,8 +279,12 @@ export default function TabelPenilaianAlternatif() {
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
                   <td>{item.periode}</td>
-                  <td>{item.alternativeId}</td>
-                  <td>{item.kriteria}</td>
+                  <td>
+                    {item.alternative ? item.alternative.name : "Loading..."}
+                  </td>
+                  <td>
+                    {item.criteria ? item.criteria.kriteriaId : "Loading..."}
+                  </td>
                   <td>{item.nilai}</td>
                   <td>
                     <span>
@@ -243,11 +308,20 @@ export default function TabelPenilaianAlternatif() {
               ))}
             </tbody>
           </table>
-          <Pagination
-            totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={paginate}
-          />
+          <div className="text-center">
+            <div className="row align-items-center">
+              <div className="col-md">
+                <Pagination
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  onPageChange={paginate}
+                />
+              </div>
+              <div className="col-md text-end">
+                <button className="btn btn-primary">Perhitungan SAW</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

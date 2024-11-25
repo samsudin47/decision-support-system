@@ -11,7 +11,7 @@ export default function TableKriteria() {
   const [show, setShow] = useState(false);
   const [id, setId] = useState("");
   const [kode, setKode] = useState("");
-  const [kriteria, setKriteria] = useState("");
+  const [kriteriaId, setKriteria] = useState("");
   const [bobot, setBobot] = useState("");
   const [type, setType] = useState("");
   const [criterias, setCriterias] = useState([]);
@@ -49,7 +49,7 @@ export default function TableKriteria() {
   const handleShow = (criteria = {}) => {
     setId(criteria.id || "");
     setKode(criteria.kode || "");
-    setKriteria(criteria.kriteria || "");
+    setKriteria(criteria.kriteriaId || "");
     setBobot(criteria.bobot || "");
     setType(criteria.type || "");
     setShow(true);
@@ -57,10 +57,10 @@ export default function TableKriteria() {
 
   // create and update criteria
   const handleSave = async () => {
-    console.log("Payload:", { kode, kriteria, bobot, type });
+    console.log("Payload:", { kode, kriteriaId, bobot, type });
     try {
       const url = "http://localhost:9000/api/cms/criteria";
-      const payload = { kode, kriteria, bobot, type };
+      const payload = { kode, kriteriaId, bobot, type };
 
       if (id) {
         const response = await axios.put(`${url}/${id}`, payload);
@@ -148,7 +148,7 @@ export default function TableKriteria() {
                     className="form-control w-100"
                     id="kriteria"
                     aria-describedby="kriteriaHelp"
-                    value={kriteria}
+                    value={kriteriaId}
                     onChange={(e) => setKriteria(e.target.value)}
                   />
                 </div>
@@ -216,7 +216,7 @@ export default function TableKriteria() {
                     {(currentPage - 1) * itemPerPage + index + 1}
                   </td>
                   <td>{criteria.kode}</td>
-                  <td>{criteria.kriteria}</td>
+                  <td>{criteria.kriteriaId}</td>
                   <td>{criteria.bobot}</td>
                   <td>{criteria.type}</td>
                   <td>
