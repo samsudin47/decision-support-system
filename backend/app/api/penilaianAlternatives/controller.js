@@ -15,7 +15,17 @@ const createPenilaianAlternatif = async (req, res) => {
       nilai,
     });
 
-    res.status(201).json(penilaianAlternatif);
+    const penilaianWithRelations = await PenilaianAlternatif.findByPk(
+      penilaianAlternatif.id,
+      {
+        include: [
+          { model: Alternative, as: "alternative", attributes: ["name"] },
+          { model: Criteria, as: "criteria", attributes: ["kriteriaId"] },
+        ],
+      }
+    );
+
+    res.status(201).json(penilaianWithRelations);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -26,8 +36,8 @@ const getAllPenilaianAlternatif = async (req, res) => {
   try {
     const penilaianAlternatif = await PenilaianAlternatif.findAll({
       include: [
-        { model: Alternative, as: "alternative" }, // Relasi dengan model Alternative
-        { model: Criteria, as: "criteria" }, // Relasi dengan model Criteria
+        { model: Alternative, as: "alternative", attributes: ["name"] }, // Relasi dengan model Alternative
+        { model: Criteria, as: "criteria", attributes: ["kriteriaId"] }, // Relasi dengan model Criteria
       ],
     });
 

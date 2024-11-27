@@ -185,6 +185,7 @@ export default function TableAlternatif() {
                   <td>
                     <span>
                       <ion-icon
+                        id="action"
                         name="create-outline"
                         size="small"
                         onClick={() => handleShow(alternative)}
@@ -192,6 +193,7 @@ export default function TableAlternatif() {
                     </span>
                     <span>
                       <ion-icon
+                        id="action"
                         name="trash-outline"
                         size="small"
                         onClick={() => handleDelete(alternative.id)}

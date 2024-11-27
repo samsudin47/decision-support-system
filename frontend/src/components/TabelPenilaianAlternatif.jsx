@@ -41,7 +41,7 @@ export default function TabelPenilaianAlternatif() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // fetch data saat komponen dimuat
+  // fetch data saat komponen dimuata
   useEffect(() => {
     const loadData = async () => {
       const fetchData = await fetchPenilaianAlternatif();
@@ -106,6 +106,26 @@ export default function TabelPenilaianAlternatif() {
       }
       const newData = await addPenilaianAlternatif(formValues); // Pastikan fungsi ini benar
       setData([...data, newData]);
+
+      const updatedAlternative = alternatives.find(
+        (alt) => alt.id === formValues.alternativeId
+      );
+      if (!updatedAlternative) {
+        const alternativeResponse = await axios.get(
+          `http://localhost:9000/api/cms/alternatives/${formValues.alternativeId}`
+        );
+        setAlternatives([...alternatives, alternativeResponse.data]);
+      }
+      const updatedCriteria = criteria.find(
+        (crit) => crit.id === formValues.kriteriaId
+      );
+      if (!updatedCriteria) {
+        const criteriaResponse = await axios.get(
+          `http://localhost:9000/api/cms/criteria/${formValues.kriteriaId}`
+        );
+        setCriteria([...criteria, criteriaResponse.data]);
+      }
+
       handleClose();
     } catch (error) {
       console.error("Error adding data:", error);
@@ -113,16 +133,55 @@ export default function TabelPenilaianAlternatif() {
   };
 
   // Fungsi memperbarui data
-  const handleUpdate = async (id, updatedValues) => {
-    const updatedData = await updatePenilaianAlternatif(id, updatedValues);
-    setData(data.map((item) => (item.id === id ? updatedData : item)));
+
+  const handleUpdate = async (id) => {
+    try {
+      if (
+        !formValues.periode ||
+        !formValues.alternativeId ||
+        !formValues.kriteriaId ||
+        !formValues.nilai
+      ) {
+        alert("Pastikan semua field terisi.");
+        return;
+      }
+
+      // Memanggil API update
+      const updatedData = await updatePenilaianAlternatif(id, formValues);
+
+      if (updatedData) {
+        // Update state data langsung tanpa menunggu fetch ulang
+        setData((prevData) =>
+          prevData.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  ...updatedData, // Menggabungkan data yang diperbarui dari API
+                  alternative: updatedData.alternative || item.alternative, // Memastikan alternatif diperbarui
+                  criteria: updatedData.criteria || item.criteria, // Memastikan kriteria diperbarui
+                }
+              : item
+          )
+        );
+
+        alert("Data berhasil diperbarui!");
+        handleClose(); // Tutup modal
+      } else {
+        alert("Gagal memperbarui data.");
+      }
+    } catch (error) {
+      console.error("Error updating data: ", error);
+      alert("Terjadi kesalahan saat memperbarui data.");
+    }
   };
 
   // Fungsi menghapus data
   const handleDelete = async (id) => {
-    const success = await deletePenilaianAlternatif(id);
-    if (success) {
-      setData(data.filter((item) => item.id !== id));
+    if (window.confirm("Yakin ingin menghapus data ini?")) {
+      const success = await deletePenilaianAlternatif(id);
+      if (success) {
+        setData(data.filter((item) => item.id !== id));
+      }
     }
   };
 
@@ -158,17 +217,17 @@ export default function TabelPenilaianAlternatif() {
                 aria-describedby="modal-modal-description"
               >
                 <Box className="material-style rounded-3">
-                  <Typography
+                  <Box
                     id="modal-modal-title"
                     variant="h6"
-                    component="h2"
                     className="text-center pt-3"
                   >
                     Add Nilai Alternatif
-                  </Typography>
+                  </Box>
                   <Typography
                     id="modal-modal-description"
                     sx={{ mt: 2 }}
+                    component="div"
                     className="container"
                   >
                     <form className="m-3 mx-5">
@@ -197,7 +256,7 @@ export default function TabelPenilaianAlternatif() {
                           value={formValues.alternativeId}
                           onChange={handleInputChange}
                         >
-                          <option selected>- Pilih -</option>
+                          <option value>- Pilih -</option>
                           {alternatives.map((alt) => (
                             <option key={alt.id} value={alt.id}>
                               {alt.name}
@@ -217,7 +276,7 @@ export default function TabelPenilaianAlternatif() {
                           value={formValues.kriteriaId}
                           onChange={handleInputChange}
                         >
-                          <option selected>- Pilih -</option>
+                          <option value>- Pilih -</option>
                           {criteria.map((crit) => (
                             <option key={crit.id} value={crit.id}>
                               {crit.kriteriaId}
@@ -237,8 +296,8 @@ export default function TabelPenilaianAlternatif() {
                           value={formValues.nilai}
                           onChange={handleInputChange}
                         >
-                          <option selected>-- Pilih --</option>
-                          {Array.from({ length: 9 }, (_, i) => (
+                          <option value>-- Pilih --</option>
+                          {Array.from({ length: 5 }, (_, i) => (
                             <option key={i + 1} value={i + 1}>
                               {i + 1}
                             </option>
@@ -249,8 +308,15 @@ export default function TabelPenilaianAlternatif() {
                         <Button variant="danger me-4" onClick={handleClose}>
                           Close
                         </Button>
-                        <Button variant="primary" onClick={handleAdd}>
-                          Save Changes
+                        <Button
+                          variant="primary"
+                          onClick={() => {
+                            formValues.id
+                              ? handleUpdate(formValues.id)
+                              : handleAdd();
+                          }}
+                        >
+                          {formValues.id ? "Update" : "Save Changes"}
                         </Button>
                       </div>
                     </form>
@@ -274,16 +340,20 @@ export default function TabelPenilaianAlternatif() {
             </thead>
             <tbody>
               {currentItems.map((item, index) => (
-                <tr key={item.id}>
+                <tr key={index}>
                   <td scope="row">
                     {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
                   <td>{item.periode}</td>
                   <td>
-                    {item.alternative ? item.alternative.name : "Loading..."}
+                    {item.alternative
+                      ? item.alternative.name
+                      : "Tidak Tersedia"}
                   </td>
                   <td>
-                    {item.criteria ? item.criteria.kriteriaId : "Loading..."}
+                    {item.criteria
+                      ? item.criteria.kriteriaId
+                      : "Tidak Tersedia"}
                   </td>
                   <td>{item.nilai}</td>
                   <td>
@@ -292,7 +362,16 @@ export default function TabelPenilaianAlternatif() {
                         id="action"
                         name="create-outline"
                         size="small"
-                        onClick={() => handleUpdate(item.id, formValues)}
+                        onClick={() => {
+                          setFormValues({
+                            id: item.id,
+                            periode: item.periode,
+                            alternativeId: item.alternativeId || "",
+                            kriteriaId: item.kriteriaId || "",
+                            nilai: item.nilai,
+                          });
+                          handleOpen();
+                        }}
                       ></ion-icon>
                     </span>
                     <span>

@@ -20,16 +20,16 @@ export default function HasilPreferensi() {
               <tr>
                 <td scope="row">1</td>
                 <td>Produk 1</td>
-                <td>0.2</td>
-                <td>0.3</td>
-                <td>0.2</td>
-                <td>0.2</td>
-                <td>0.2</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
               </tr>
               <tr>
                 <td scope="row">2</td>
                 <td>Produk 2</td>
-                <td>0.2</td>
+                <td>0</td>
                 <td>1</td>
                 <td>1</td>
                 <td>1</td>

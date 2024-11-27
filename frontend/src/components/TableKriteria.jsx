@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -110,6 +111,7 @@ export default function TableKriteria() {
       alert("Terjadi kesalahan pada saat menghapus kriteria");
     }
   };
+
   return (
     <>
       <div className="container mt-5">
@@ -178,6 +180,7 @@ export default function TableKriteria() {
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                   >
+                    <option value="">Pilih Atribut</option>
                     <option value="cost">Cost</option>
                     <option value="benefit">Benefit</option>
                   </select>
@@ -193,8 +196,6 @@ export default function TableKriteria() {
               </Button>
             </Modal.Footer>
           </Modal>
-
-          {/*  */}
         </div>
         {/* Table Display Kriteria */}
         <div className="me-5">
