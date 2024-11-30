@@ -1,8 +1,8 @@
 import Normalisasi from "./Normalisasi";
 import HasilNormalisasi from "./HasilNormalisasi";
 import HitungNilaiPreferensi from "./HitungNilaiPreferensi";
-import HasilPreferensi from "./HasilPreferensi";
-import HitungTotalNilaiPreferensi from "./HitungTotalNilaiPreferensi";
+// import HasilPreferensi from "./HasilPreferensi";
+// import HitungTotalNilaiPreferensi from "./HitungTotalNilaiPreferensi";
 import Perangkingan from "./Perangkingan";
 import axios from "axios";
 // eslint-disable-next-line no-unused-vars
@@ -56,6 +56,10 @@ export default function TableProsesHitung() {
     loadAlternatives();
     loadCriteria();
   }, []);
+
+  const handleNormalizedValues = (normalized) => {
+    setNormalizedValues(normalized);
+  };
 
   return (
     <>
@@ -144,9 +148,14 @@ export default function TableProsesHitung() {
             alternatives={alternatives}
             criteria={criteria}
           />
-          <HasilPreferensi />
-          <HitungTotalNilaiPreferensi />
-          <Perangkingan />
+          {/* <HasilPreferensi /> */}
+          {/* <HitungTotalNilaiPreferensi /> */}
+
+          <Perangkingan
+            penilaianAlternatif={penilaianAlternatif}
+            alternatives={alternatives}
+            criteria={criteria}
+          />
         </div>
       </div>
     </>

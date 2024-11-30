@@ -3,7 +3,7 @@ export default function HitungTotalNilaiPreferensi() {
     <>
       <div className="my-5">
         <h4 className="text-start mb-4">
-          6. Menghitung Total Nilai Preferensi
+          5. Menghitung Total Nilai Preferensi
         </h4>
         <div className="me-5">
           <table className="table table-striped">
