@@ -12,30 +12,52 @@ export default function HitungNilaiPreferensi({
     return Math.max(...values);
   };
 
-  // Hitung nilai normalisasi
-  const normalizedValues = alternatives.map((alternative) => {
-    const normalized = {};
-    normalized.alternative = alternative.name;
-    normalized.values = criteria.map((crit) => {
+  const getMinValueForCriterion = (kriteriaId) => {
+    const values = penilaianAlternatif
+      .filter((item) => item.kriteriaId === kriteriaId)
+      .map((item) => item.nilai);
+    return Math.min(...values);
+  };
+
+  // Hitung nilai preferensi
+  const calculatedPreferences = alternatives.map((alternative) => {
+    let totalPreference = 0; // Akumulasi nilai preferensi
+    const normalizedValues = criteria.map((crit) => {
       const nilai = penilaianAlternatif.find(
         (item) =>
           item.alternativeId === alternative.id && item.kriteriaId === crit.id
       )?.nilai;
 
-      const maxNilai = getMaxValueForCriterion(crit.id);
-      const nilaiNormalisasi = nilai ? nilai / maxNilai : 0;
+      let normalizedValue = 0;
+
+      if (crit.kriteriaId === "Harga") {
+        // Menggunakan nilai minimum untuk kriteria "Harga"
+        const minNilai = getMinValueForCriterion(crit.id);
+        normalizedValue = nilai ? minNilai / nilai : 0;
+      } else {
+        // Menggunakan nilai maksimum untuk kriteria lainnya
+        const maxNilai = getMaxValueForCriterion(crit.id);
+        normalizedValue = nilai ? nilai / maxNilai : 0;
+      }
+
+      // Hitung nilai berbobot
+      const weightedValue = normalizedValue * (crit.bobot / 10);
+
+      // Tambahkan ke total nilai preferensi
+      totalPreference += weightedValue;
 
       return {
         kriteriaId: crit.id,
-        normalizedValue: nilaiNormalisasi,
-        weightedValue: nilaiNormalisasi * crit.bobot, // Mengalikan dengan bobot
+        normalizedValue: normalizedValue,
+        weightedValue: weightedValue,
       };
     });
-    normalized.preferensi = normalized.values.reduce(
-      (acc, val) => acc + val.weightedValue,
-      0
-    ); // Jumlahkan nilai preferensi
-    return normalized;
+
+    return {
+      alternative: alternative.name,
+      normalizedValues,
+      preferensi: totalPreference,
+    };
   });
 
   return (
@@ -58,11 +80,11 @@ export default function HitungNilaiPreferensi({
             </tr>
           </thead>
           <tbody>
-            {normalizedValues.map((item, index) => (
+            {calculatedPreferences.map((item, index) => (
               <tr key={index}>
                 <td scope="row">{index + 1}</td>
                 <td>{item.alternative}</td>
-                {item.values.map((val, idx) => (
+                {item.normalizedValues.map((val, idx) => (
                   <td key={idx}>{val.normalizedValue.toFixed(2)}</td>
                 ))}
                 <td>{item.preferensi.toFixed(2)}</td>
@@ -73,7 +95,7 @@ export default function HitungNilaiPreferensi({
                 Bobot Kriteria
               </th>
               {criteria.map((crit) => (
-                <td key={crit.id}>{crit.bobot}</td>
+                <td key={crit.id}>{(crit.bobot / 10).toFixed(1)}</td>
               ))}
               <td>-</td>
             </tr>

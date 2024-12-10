@@ -9,7 +9,16 @@ export default function Normalisasi({
     const values = penilaianAlternatif
       .filter((item) => item.kriteriaId === kriteriaId)
       .map((item) => item.nilai);
+    console.log(`Nilai minimal untuk kriteria ${kriteriaId}:`, values);
     return Math.max(...values);
+  };
+
+  // fungsi menghitung nilai minimal untuk setiap kriteria
+  const getMinValueForCriterion = (kriteriaId) => {
+    const values = penilaianAlternatif
+      .filter((item) => item.kriteriaId === kriteriaId)
+      .map((item) => item.nilai);
+    return Math.min(...values);
   };
 
   return (
@@ -44,13 +53,20 @@ export default function Normalisasi({
                     const nilai = penilaian.find(
                       (item) => item.kriteriaId === crit.id
                     )?.nilai;
-
                     // Hitung nilai normalisasi
-                    const maxNilai = getMaxValueForCriterion(crit.id);
-                    let nilaiNormalisasi = nilai
-                      ? (nilai / maxNilai).toFixed(2)
-                      : "-";
-
+                    let nilaiNormalisasi = "-";
+                    if (nilai) {
+                      if (crit.kriteriaId === "Harga") {
+                        // perhitungan khusus untuk kriteria harga min/nilai
+                        const minNilai = getMinValueForCriterion(crit.id);
+                        nilaiNormalisasi = (minNilai / nilai).toFixed(2);
+                      } else {
+                        // perhitungan normal
+                        const maxNilai = getMaxValueForCriterion(crit.id);
+                        nilaiNormalisasi = (nilai / maxNilai).toFixed(2);
+                      }
+                    }
+                    // Menghapus trailing .00 jika hasilnya bilangan bulat
                     if (
                       nilaiNormalisasi !== "-" &&
                       parseFloat(nilaiNormalisasi) % 1 === 0

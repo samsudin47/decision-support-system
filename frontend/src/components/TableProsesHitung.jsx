@@ -57,9 +57,9 @@ export default function TableProsesHitung() {
     loadCriteria();
   }, []);
 
-  const handleNormalizedValues = (normalized) => {
-    setNormalizedValues(normalized);
-  };
+  // const handleNormalizedValues = (normalized) => {
+  //   setNormalizedValues(normalized);
+  // };
 
   return (
     <>
@@ -148,9 +148,6 @@ export default function TableProsesHitung() {
             alternatives={alternatives}
             criteria={criteria}
           />
-          {/* <HasilPreferensi /> */}
-          {/* <HitungTotalNilaiPreferensi /> */}
-
           <Perangkingan
             penilaianAlternatif={penilaianAlternatif}
             alternatives={alternatives}

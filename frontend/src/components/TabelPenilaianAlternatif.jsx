@@ -297,9 +297,9 @@ export default function TabelPenilaianAlternatif() {
                           onChange={handleInputChange}
                         >
                           <option value>-- Pilih --</option>
-                          {Array.from({ length: 5 }, (_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              {i + 1}
+                          {Array.from({ length: 6 }, (_, i) => (
+                            <option key={i + 0} value={i + 0}>
+                              {i + 0}
                             </option>
                           ))}
                         </select>

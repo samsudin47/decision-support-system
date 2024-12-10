@@ -43,7 +43,7 @@ export default function SideBar() {
               <li className="mb-4">
                 <Link className="sidebar" to="/">
                   <FaHome className="me-3 text-white" />
-                  Home
+                  Dashboard
                 </Link>
               </li>
               <li className="mb-4">

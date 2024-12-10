@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/prop-types */
 export default function Perangkingan({
   penilaianAlternatif,
   alternatives,
@@ -13,34 +12,50 @@ export default function Perangkingan({
     return Math.max(...values);
   };
 
+  const getMinValueForCriterion = (kriteriaId) => {
+    const values = penilaianAlternatif
+      .filter((item) => item.kriteriaId === kriteriaId)
+      .map((item) => item.nilai);
+    return Math.min(...values);
+  };
+
   // Hitung nilai normalisasi dan preferensi
   const normalizedValues = alternatives.map((alternative) => {
+    let totalPreference = 0; // Akumulasi nilai preferensi
     const normalized = {};
     normalized.alternative = alternative.name;
-
-    // Menghitung nilai normalisasi dan weightedValue untuk setiap kriteria
     normalized.values = criteria.map((crit) => {
       const nilai = penilaianAlternatif.find(
         (item) =>
           item.alternativeId === alternative.id && item.kriteriaId === crit.id
       )?.nilai;
 
-      const maxNilai = getMaxValueForCriterion(crit.id);
-      const nilaiNormalisasi = nilai ? nilai / maxNilai : 0;
+      let normalizedValue = 0;
+
+      if (crit.kriteriaId === "Harga") {
+        // Menggunakan nilai minimum untuk kriteria "Harga"
+        const minNilai = getMinValueForCriterion(crit.id);
+        normalizedValue = nilai ? minNilai / nilai : 0;
+      } else {
+        // Menggunakan nilai maksimum untuk kriteria lainnya
+        const maxNilai = getMaxValueForCriterion(crit.id);
+        normalizedValue = nilai ? nilai / maxNilai : 0;
+      }
+
+      // Hitung nilai berbobot
+      const weightedValue = normalizedValue * (crit.bobot / 10);
+
+      // Tambahkan ke total nilai preferensi
+      totalPreference += weightedValue;
 
       return {
         kriteriaId: crit.id,
-        normalizedValue: nilaiNormalisasi,
-        weightedValue: nilaiNormalisasi * crit.bobot, // Mengalikan dengan bobot
+        normalizedValue: normalizedValue,
+        weightedValue: weightedValue,
       };
     });
 
-    // Menghitung nilai preferensi dengan menjumlahkan weightedValue
-    normalized.preferensi = normalized.values.reduce(
-      (acc, val) => acc + val.weightedValue,
-      0
-    );
-
+    normalized.preferensi = totalPreference; // Jumlahkan semua weightedValue
     return normalized;
   });
 
@@ -68,8 +83,7 @@ export default function Perangkingan({
                 <td scope="row">{index + 1}</td>
                 <td>{item.alternative}</td>
                 <td>{item.preferensi.toFixed(2)}</td>
-                <td>{index + 1}</td>{" "}
-                {/* Menampilkan rangking berdasarkan urutan */}
+                <td>{index + 1}</td>
               </tr>
             ))}
           </tbody>

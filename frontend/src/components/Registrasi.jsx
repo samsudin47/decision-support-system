@@ -48,10 +48,10 @@ export default function Registrasi() {
         <div className="container">
           <div className="pt-5 ">
             <h2 className="text-center judul text-light ">
-              Decision Support System
+              Sistem Penunjang Keputusan
             </h2>
             <h3 className="text-center judul text-warning">
-              Simple Additive Weighting
+              Pemilihan Alat Bantu Dengar Method SAW
             </h3>
             <div className="mt-4">
               <div className="row justify-content-center mb-5">

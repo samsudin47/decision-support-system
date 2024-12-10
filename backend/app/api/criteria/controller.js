@@ -41,19 +41,15 @@ const updateCriteria = async (req, res) => {
   try {
     const { id } = req.params;
     const { kode, kriteriaId, bobot, type } = req.body;
-
     const existingCriteria = await Criteria.findOne({
       where: { kode },
     });
-
     if (existingCriteria && existingCriteria.id !== parseInt(id)) {
       return res
         .status(400)
         .json({ message: "Kode sudah digunakan oleh kriteria lain" });
     }
-
     const criteria = await Criteria.findByPk(id);
-
     if (criteria) {
       criteria.kode = kode;
       criteria.kriteriaId = kriteriaId;
@@ -71,7 +67,6 @@ const deleteCriteria = async (req, res) => {
   try {
     const { id } = req.params;
     const criteria = await Criteria.findByPk(id);
-
     if (criteria) {
       await criteria.destroy();
       res.status(200).json({ message: "Berhasil menghapus criteria" });

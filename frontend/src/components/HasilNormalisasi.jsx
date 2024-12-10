@@ -12,6 +12,13 @@ export default function HasilNormalisasi({
     return Math.max(...values);
   };
 
+  const getMinValueForCriterion = (kriteriaId) => {
+    const values = penilaianAlternatif
+      .filter((item) => item.kriteriaId === kriteriaId)
+      .map((item) => item.nilai);
+    return Math.min(...values);
+  };
+
   return (
     <div className="my-5">
       <h4 className="text-start mb-4">3. Hasil Normalisasi</h4>
@@ -46,10 +53,16 @@ export default function HasilNormalisasi({
                     )?.nilai;
 
                     // Hitung nilai normalisasi
-                    const maxNilai = getMaxValueForCriterion(crit.id);
-                    let nilaiNormalisasi = nilai
-                      ? (nilai / maxNilai).toFixed(2)
-                      : "-";
+                    let nilaiNormalisasi = "-";
+                    if (nilai) {
+                      if (crit.kriteriaId === "Harga") {
+                        const minNilai = getMinValueForCriterion(crit.id);
+                        nilaiNormalisasi = (minNilai / nilai).toFixed(2);
+                      } else {
+                        const maxNilai = getMaxValueForCriterion(crit.id);
+                        nilaiNormalisasi = (nilai / maxNilai).toFixed(2);
+                      }
+                    }
 
                     if (
                       nilaiNormalisasi !== "-" &&

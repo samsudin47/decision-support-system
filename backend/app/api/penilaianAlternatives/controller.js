@@ -6,15 +6,12 @@ const Criteria = require("../criteria/model");
 const createPenilaianAlternatif = async (req, res) => {
   try {
     const { periode, alternativeId, kriteriaId, nilai } = req.body;
-
-    // Membuat penilaian alternatif baru
     const penilaianAlternatif = await PenilaianAlternatif.create({
       periode,
       alternativeId,
       kriteriaId,
       nilai,
     });
-
     const penilaianWithRelations = await PenilaianAlternatif.findByPk(
       penilaianAlternatif.id,
       {
@@ -24,7 +21,6 @@ const createPenilaianAlternatif = async (req, res) => {
         ],
       }
     );
-
     res.status(201).json(penilaianWithRelations);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -73,15 +69,12 @@ const updatePenilaianAlternatif = async (req, res) => {
   try {
     const { id } = req.params;
     const { periode, alternativeId, kriteriaId, nilai } = req.body;
-
     const penilaianAlternatif = await PenilaianAlternatif.findByPk(id);
-
     if (penilaianAlternatif) {
       penilaianAlternatif.periode = periode;
       penilaianAlternatif.alternativeId = alternativeId;
       penilaianAlternatif.kriteriaId = kriteriaId;
       penilaianAlternatif.nilai = nilai;
-
       await penilaianAlternatif.save();
       res.status(200).json(penilaianAlternatif);
     } else {
@@ -97,7 +90,6 @@ const deletePenilaianAlternatif = async (req, res) => {
   try {
     const { id } = req.params;
     const penilaianAlternatif = await PenilaianAlternatif.findByPk(id);
-
     if (penilaianAlternatif) {
       await penilaianAlternatif.destroy();
       res
