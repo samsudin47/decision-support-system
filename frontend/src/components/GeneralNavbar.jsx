@@ -1,6 +1,7 @@
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function GeneralNavbar() {
   const [userName, setUsername] = useState("");
@@ -21,9 +22,14 @@ export default function GeneralNavbar() {
           >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a className="nav-link active" aria-current="page" href="#">
+                <Link
+                  className="nav-link active"
+                  aria-current="page"
+                  href="#"
+                  to={"/"}
+                >
                   Dashboard
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link active" href="#">
@@ -31,9 +37,9 @@ export default function GeneralNavbar() {
                 </a>
               </li>
               <li className="nav-item">
-                <a className="nav-link active" href="#">
+                <Link className="nav-link active" to={"/"}>
                   Home
-                </a>
+                </Link>
               </li>
             </ul>
             <Form className="d-flex" role="search">

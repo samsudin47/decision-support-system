@@ -53,7 +53,7 @@ export default function Login() {
         }
       }
     } catch (error) {
-      setErrorMessage("Your email or password is incorrect");
+      setErrorMessage("Email dan Password Anda belum terdaftar");
       setLoading(false);
       console.error("Error", error);
     }

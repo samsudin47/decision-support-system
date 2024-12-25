@@ -157,7 +157,7 @@ export default function TableAlternatif() {
                 Close
               </Button>
               <Button variant="primary" onClick={handleSave}>
-                {id ? "Update" : "Save Changes"}
+                {id ? "Update" : "Save"}
               </Button>
             </Modal.Footer>
           </Modal>

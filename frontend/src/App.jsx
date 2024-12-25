@@ -7,6 +7,7 @@ import DataKriteria from "./layouts/DataKriteria";
 import PenilaianAlternatif from "./layouts/PenilaianAlternatif";
 import ProsesHitung from "./layouts/ProsesHitung";
 import DataHasilKeputusan from "./layouts/DataHasilKeputusan";
+import ListDataUsers from "./layouts/ListDataUsers";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           />
           <Route path="/proseshitung" element={<ProsesHitung />} />
           <Route path="/hasilkeputusan" element={<DataHasilKeputusan />} />
+          <Route path="/datausers" element={<ListDataUsers />} />
         </Routes>
       </BrowserRouter>
     </>

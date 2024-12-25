@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import { useState, useEffect } from "react";
 import Pagination from "./Pagination";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import {
   fetchPenilaianAlternatif,
   addPenilaianAlternatif,
@@ -205,9 +206,6 @@ export default function TabelPenilaianAlternatif() {
               <Button className="btn btn-primary mb-4" onClick={handleOpen}>
                 Add Nilai Alternatif
               </Button>
-              <Button className="btn btn-danger ms-3 mb-4">
-                Kosongkan Tabel
-              </Button>
             </div>
             <div className="d-flex justify-content-center">
               <Modal
@@ -397,7 +395,9 @@ export default function TabelPenilaianAlternatif() {
                 />
               </div>
               <div className="col-md text-end">
-                <button className="btn btn-primary">Perhitungan SAW</button>
+                <Link to={"/proseshitung"}>
+                  <button className="btn btn-primary">Perhitungan SAW</button>
+                </Link>
               </div>
             </div>
           </div>

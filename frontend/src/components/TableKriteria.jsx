@@ -119,12 +119,12 @@ export default function TableKriteria() {
           {/*  */}
           <Button className="btn btn-primary mb-4" onClick={handleShow}>
             <ion-icon name="add-outline" size="small"></ion-icon>
-            Add New Kriteria
+            Add Kriteria
           </Button>
 
           <Modal show={show} onHide={handleClose}>
             <ModalHeader>
-              <ModalTitle>Add New Kriteria</ModalTitle>
+              <ModalTitle>Add Kriteria</ModalTitle>
             </ModalHeader>
             <Modal.Body>
               <form>
@@ -192,7 +192,7 @@ export default function TableKriteria() {
                 Close
               </Button>
               <Button variant="primary" onClick={handleSave}>
-                {id ? "Update" : "Save Changes"}
+                {id ? "Update" : "Save"}
               </Button>
             </Modal.Footer>
           </Modal>

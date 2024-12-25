@@ -55,7 +55,7 @@ export default function SideBar() {
               <li className="mb-4">
                 <Link className="sidebar" to={"/kriteria"}>
                   <AiFillDatabase className="me-3 text-white" />
-                  Data Kriteria
+                  Data Bobot dan Kriteria
                 </Link>
               </li>
               <li className="mb-4">
@@ -80,7 +80,7 @@ export default function SideBar() {
             <h5 className="text-warning text-center my-4">User</h5>
             <ul>
               <li className="mb-4">
-                <Link className="sidebar">
+                <Link className="sidebar" to={"/datausers"}>
                   <LuUsers className="me-3 text-white" />
                   Data User
                 </Link>
