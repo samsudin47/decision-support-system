@@ -14,7 +14,7 @@ export default function GeneralNavbar() {
   }, []);
   return (
     <>
-      <nav className="navbar navbar-expand-lg">
+      <nav className="navbar mt-3 navbar-expand-lg">
         <div className="container-fluid">
           <div
             className="collapse navbar-collapse me-5"
