@@ -45,7 +45,7 @@ export default function HasilNormalisasi({
               return (
                 <tr key={alternative.id}>
                   <td scope="row">{index + 1}</td>
-                  <td>{alternative.name}</td>
+                  <td>{alternative.kode}</td>
                   {criteria.map((crit) => {
                     // Temukan nilai untuk kriteria tertentu
                     const nilai = penilaian.find(

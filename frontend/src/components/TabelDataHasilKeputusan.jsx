@@ -197,7 +197,13 @@ export default function TabelDataHasilKeputusan() {
                   {sortedValues.map((item, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>PO{index + 1}</td>
+                      <td>
+                        {
+                          alternatives.find(
+                            (alt) => alt.name === item.alternative
+                          )?.kode
+                        }
+                      </td>
                       <td>{item.alternative}</td>
                       <td>{item.preferensi.toFixed(2)}</td>
                     </tr>

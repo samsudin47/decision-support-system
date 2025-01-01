@@ -83,7 +83,12 @@ export default function HitungNilaiPreferensi({
             {calculatedPreferences.map((item, index) => (
               <tr key={index}>
                 <td scope="row">{index + 1}</td>
-                <td>{item.alternative}</td>
+                <td>
+                  {
+                    alternatives.find((alt) => alt.name === item.alternative)
+                      ?.kode
+                  }
+                </td>
                 {item.normalizedValues.map((val, idx) => (
                   <td key={idx}>{val.normalizedValue.toFixed(2)}</td>
                 ))}

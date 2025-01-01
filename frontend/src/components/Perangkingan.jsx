@@ -81,7 +81,12 @@ export default function Perangkingan({
             {sortedValues.map((item, index) => (
               <tr key={index}>
                 <td scope="row">{index + 1}</td>
-                <td>{item.alternative}</td>
+                <td>
+                  {
+                    alternatives.find((alt) => alt.name === item.alternative)
+                      ?.kode
+                  }
+                </td>
                 <td>{item.preferensi.toFixed(2)}</td>
                 <td>{index + 1}</td>
               </tr>
