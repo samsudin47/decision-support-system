@@ -6,8 +6,10 @@ export default function Introduction() {
       <div className="container text-start">
         <p className="lead">
           <br />
-          <button className="btn btn-primary">
-            <Link to={"#"}>Lihat Panduan</Link>
+          <button className="btn btn-light shadow">
+            <Link to={"#"}>
+              <span className="samma">sammaHearingSolutions</span>
+            </Link>
           </button>
         </p>
       </div>
